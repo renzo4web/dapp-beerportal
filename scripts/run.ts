@@ -3,12 +3,28 @@ import { ethers } from "hardhat";
 import { Contract, ContractFactory } from "ethers";
 
 const main = async (): Promise<void> => {
-  const waveContractFactory: ContractFactory = await ethers.getContractFactory(
-    "WavePortal"
+  const [owner, randomPerson] = await ethers.getSigners();
+  const beerContractFactory: ContractFactory = await ethers.getContractFactory(
+    "BeerPortal"
   );
-  const waveContract: Contract = await waveContractFactory.deploy();
-  await waveContract.deployed();
-  console.log("Contract deployed to:", waveContract.address);
+  const beerContract: Contract = await beerContractFactory.deploy();
+  await beerContract.deployed();
+
+  console.log(`Contract deploy to: ${beerContract.address}`);
+  console.log(`Contract deploy by: ${owner.address}`);
+
+  let beerCount;
+  beerCount = await beerContract.getTotalBeers();
+
+  let beerTxn = await beerContract.beer();
+  await beerTxn.wait();
+
+  // test multiplayer
+  beerTxn = await beerContract.connect(randomPerson).beer();
+  await beerTxn.wait();
+
+  beerCount = await beerContract.getTotalBeers();
+  console.log(`Current number of beers : ${beerCount}`);
 };
 
 const runMain = async () => {
