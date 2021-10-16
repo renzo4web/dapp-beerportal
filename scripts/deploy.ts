@@ -1,18 +1,15 @@
 /* eslint-disable no-process-exit */
 import { ethers } from "hardhat";
-import { ContractFactory } from "ethers";
 
 const main = async () => {
-  const [deployer] = await ethers.getSigners();
-  const accountBalance = await deployer.getBalance();
+  const beerContractFactory = await ethers.getContractFactory("BeerPortal");
+  const beerContract = await beerContractFactory.deploy({
+    value: ethers.utils.parseEther("0.001"),
+  });
 
-  console.log("Deploying contracts with account: ", deployer.address);
-  console.log("Account balance: ", accountBalance.toString());
+  await beerContract.deployed();
 
-  const Token: ContractFactory = await ethers.getContractFactory("BeerPortal");
-  const portal = await Token.deploy();
-
-  console.log("BeerPortal address: ", portal.address);
+  console.log("beerPortal address: ", beerContract.address);
 };
 
 const runMain = async () => {

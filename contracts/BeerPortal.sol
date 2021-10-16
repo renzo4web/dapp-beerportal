@@ -1,49 +1,58 @@
 // Copyright Renzo R 2021. All Rights Reserved
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 
 
 pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
 
-contract BeerPortal{
-	uint256 totalBeers;
+contract BeerPortal {
+    uint256 totalBeers;
 
-	event newBeer(address indexed from, uint256 timestamp, string message,string favBeer);
-
-
-	struct Beer {
-		address sender;
-		string message;
-		string favBeer;
-		uint256 timestamp;
-	}
+    event newBeer(address indexed from, uint256 timestamp, string message, string favBeer);
 
 
-	Beer[] beers;
+    struct Beer {
+        address sender;
+        string message;
+        string favBeer;
+        uint256 timestamp;
+    }
 
 
-	constructor(){
-		console.log("Look at this smart contract");
-	}
+    Beer[] beers;
 
-	function beer(string memory _message, string memory _favBeer) public {
-		totalBeers += 1;
-		console.log("%s has sended a Beer!", msg.sender);
 
-		beers.push(Beer(msg.sender, _message, _favBeer, block.timestamp));
+    constructor() payable {
+        console.log("Look at this smart contract");
+    }
 
-		emit newBeer(msg.sender, block.timestamp, _message, _favBeer);
-	}
+    function beer(string memory _message, string memory _favBeer) public {
+        totalBeers += 1;
+        console.log("%s has sent a Beer!", msg.sender);
 
-	function getAllBeers() public view returns (Beer[] memory){
-		return beers;
-	}
+        beers.push(Beer(msg.sender, _message, _favBeer, block.timestamp));
 
-	function getTotalBeers() public view returns (uint256){
-		console.log("We have %d toal of beers!!!", totalBeers);
-		return totalBeers;
-	}
+        emit newBeer(msg.sender, block.timestamp, _message, _favBeer);
+
+        uint256 prizeAmount = 0.0001 ether;
+        require(prizeAmount <= address(this).balance,
+            "Trying to withdraw more money than the contract has."
+        );
+
+        (bool success,) = (msg.sender).call{value : prizeAmount}(" ");
+
+        require(success, "Failed to withdraw money from contract.");
+    }
+
+    function getAllBeers() public view returns (Beer[] memory){
+        return beers;
+    }
+
+    function getTotalBeers() public view returns (uint256){
+        console.log("We have %d toal of beers!!!", totalBeers);
+        return totalBeers;
+    }
 
 }
 
