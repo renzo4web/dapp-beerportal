@@ -20,19 +20,13 @@ const main = async (): Promise<void> => {
 
   console.log("Contract Balance", ethers.utils.formatEther(contractBalance));
 
-  let beerCount;
-  beerCount = await beerContract.getTotalBeers();
-  console.log(beerCount.toNumber());
+  // --------------- TEST --------------------------
 
-  /*
-   *   Send Beer
-   * */
   const beerTxn = await beerContract.beer("hi this is a test", "Quilmens");
   await beerTxn.wait();
 
-  /*
-   * Get Contract balance to see what happened!
-   */
+  const beerTxn2 = await beerContract.beer("hi this is a test 2", "heiniken");
+  await beerTxn2.wait();
 
   contractBalance = await ethers.provider.getBalance(beerContract.address);
   console.log("Contract balance:", ethers.utils.formatEther(contractBalance));

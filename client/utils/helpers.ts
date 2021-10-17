@@ -1,10 +1,10 @@
 import {ethers} from "ethers";
-import abi from "../utils/BeerPortal.json";
-import {BeerPortal} from "../../typechain/BeerPortal";
-import {useAppState} from "../context/AppState";
-import {Beer} from "../types/Beer.interface";
+import abi from '../../artifacts/contracts/BeerPortal.sol/BeerPortal.json';
+import { BeerPortal } from '../../typechain/BeerPortal';
+import { useAppState } from '../context/AppState';
+import { Beer } from '../types/Beer.interface';
 
-const CONTRACT_ADDRESS = '0xd2e1219D85E76fDCa539EE3139E988cf37493B2b';
+const CONTRACT_ADDRESS = '0xC113dC65227073627f4eDbE65C5311d17Ee968Cd';
 
 export const checkIfWalletIsConnected = async (): Promise<any> => {
     try {
