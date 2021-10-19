@@ -1,9 +1,16 @@
 import { ethers } from 'ethers';
-import abi from '../../artifacts/contracts/BeerPortal.sol/BeerPortal.json';
+import * as abi from './BeerPortal.json';
 import { BeerPortal } from '../../typechain/BeerPortal';
 import { Beer } from '../types/Beer.interface';
 
 const CONTRACT_ADDRESS = '0xC113dC65227073627f4eDbE65C5311d17Ee968Cd';
+
+declare global {
+    interface Window {
+        ethereum: any;
+    }
+}
+
 
 export const checkIfWalletIsConnected = async (): Promise<any> => {
     try {
