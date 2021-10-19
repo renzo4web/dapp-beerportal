@@ -134,7 +134,7 @@ export const getAllBeers = async () => {
             console.log('Contract', beerPortalContract);
             const beers = await beerPortalContract.getAllBeers();
 
-            return beers.map((beer) => ({
+            return beers.map((beer: any) => ({
                 address: beer.sender,
                 timestamp: new Date(Number(beer.timestamp) * 1000).toString(),
                 message: beer.message,
