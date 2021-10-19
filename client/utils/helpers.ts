@@ -1,4 +1,5 @@
-import {ethers} from "ethers";
+import { timeStamp } from 'console';
+import { ethers } from 'ethers';
 import abi from '../../artifacts/contracts/BeerPortal.sol/BeerPortal.json';
 import { BeerPortal } from '../../typechain/BeerPortal';
 import { useAppState } from '../context/AppState';
@@ -60,7 +61,7 @@ export const connectWallet = async (setWallet: (account: any) => void) => {
 export const beer = async (
     message: string,
     favBeer: string
-): Promise<Beer[]> => {
+): Promise<Beer[] | undefined> => {
     try {
         const { ethereum } = window;
 
@@ -83,7 +84,9 @@ export const beer = async (
             /*
              * Execute the actual beer from your smart contract
              */
-            const beerTxn = await beerPortalContract.beer(message, favBeer);
+            const beerTxn = await beerPortalContract.beer(message, favBeer, {
+                gasLimit: 300000,
+            });
             console.log('Mining...', beerTxn.hash);
 
             await beerTxn.wait();
@@ -118,21 +121,36 @@ const getContract = () => {
 
 export const getAllBeers = async () => {
     try {
-        const {ethereum} = window;
+        const { ethereum } = window;
 
         if (ethereum) {
             const beerPortalContract = getContract();
 
-            console.log("Contract", beerPortalContract);
+            console.log('Contract', beerPortalContract);
             const beers = await beerPortalContract.getAllBeers();
 
             return beers.map((beer) => ({
                 address: beer.sender,
-                timestamp: (new Date(Number(beer.timestamp) * 1000)).toString(),
+                timestamp: new Date(Number(beer.timestamp) * 1000).toString(),
                 message: beer.message,
                 favBeer: beer.favBeer,
             }));
+
+            beerPortalContract.on(
+                'NewBeer',
+                (from, timestamp, message, favBeer) => {
+                    console.log('NewBeer', from, timestamp, message, favBeer);
+
+                    return {
+                        address: from,
+                        timestamp: new Date(
+                            Number(timestamp) * 1000
+                        ).toString(),
+                        message,
+                        favBeer,
+                    };
+                }
+            );
         }
-    } catch (error) {
-    }
+    } catch (error) {}
 };

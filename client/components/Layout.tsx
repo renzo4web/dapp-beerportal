@@ -16,35 +16,40 @@ const theme = createTheme({
 
 const Layout: React.FC = ({children}) => {
 	return (
-		<ThemeProvider theme={theme}>
+        <ThemeProvider theme={theme}>
+            <Box
+                sx={{
+                    width: '100%',
+                    height: '100vh',
+                    backgroundColor: '#FDDB29',
+                    padding: '2em 1em',
+                }}
+            >
+                <Grid
+                    container
+                    spacing={2}
+                    sx={{
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        maxWidth: '650px',
+                        mx: 'auto',
+                    }}
+                >
+                    <Grid component={'header'}>
+                        <Header />
+                    </Grid>
 
-			<Box sx={{
-				width: "100%",
-				height: '100vh',
-				backgroundColor: "#FDDB29",
-				padding: "2em 1em"
-			}}>
-				<Grid container spacing={2} sx={{
-					flexDirection: "column",
-					alignItems: "center",
-					maxWidth: "650px",
-					mx:"auto",
-				}}>
-					<Grid component={"header"}>
-						<Header/>
-					</Grid>
+                    <Grid component="main" item>
+                        {children}
+                    </Grid>
 
-					<Grid component="main" item>
-						{children}
-					</Grid>
-
-					<Grid item component={'footer'}>
-						Footer
-					</Grid>
-				</Grid>
-			</Box>
-		</ThemeProvider>
-	);
+                    <Grid item component={'footer'} sx={{ marginTop: 'auto' }}>
+                        Dapp made by Renzo with ❤️
+                    </Grid>
+                </Grid>
+            </Box>
+        </ThemeProvider>
+    );
 };
 
 export default Layout;

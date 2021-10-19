@@ -15,43 +15,59 @@ interface Props {
 }
 
 const Form = ({onSubmit}: Props) => {
-        const {setAllBeers} = useAppState()
-        const [formVals, setFormVals] = useState(() => initialValues)
-
+        const { setAllBeers, setTxnCompleted, txnCompleted } = useAppState();
+        const [formVals, setFormVals] = useState(() => initialValues);
 
         const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+            setTxnCompleted(false);
             event.preventDefault();
-            const {message, favBeer} = formVals;
+            const { message, favBeer } = formVals;
 
             console.log(formVals);
-            onSubmit(message, favBeer).then(setAllBeers);
+            onSubmit(message, favBeer).then((beers) => {
+                setAllBeers(beers);
+                setTxnCompleted(true);
+            });
         };
 
         return (
             <form onSubmit={handleSubmit}>
-
-                <Stack spacing={2} sx={{maxWidth: "500px", mx: "auto"}}>
+                <Stack spacing={2} sx={{ maxWidth: '500px', mx: 'auto' }}>
                     <TextField
-                        variant={"filled"}
-                        label={"Message"}
-                        placeholder={""}
+                        variant={'filled'}
+                        label={'Message'}
+                        placeholder={''}
                         value={formVals.message}
-                        onChange={({target}) => setFormVals(vals => ({...vals, message: target.value}))}
+                        onChange={({ target }) =>
+                            setFormVals((vals) => ({
+                                ...vals,
+                                message: target.value,
+                            }))
+                        }
                         color={'secondary'}
                     />
 
                     <TextField
-                        variant={"filled"}
-                        label={"Favorite Beer"}
+                        variant={'filled'}
+                        label={'Favorite Beer'}
                         value={formVals.favBeer}
-                        onChange={({target}) => setFormVals(vals => ({...vals, favBeer: target.value}))}
+                        onChange={({ target }) =>
+                            setFormVals((vals) => ({
+                                ...vals,
+                                favBeer: target.value,
+                            }))
+                        }
                         color={'secondary'}
                     />
-                    <Button type={"submit"} color={"secondary"} variant="contained">
+                    <Button
+                        disabled={!txnCompleted}
+                        type={'submit'}
+                        color={'secondary'}
+                        variant="contained"
+                    >
                         Send
                     </Button>
                 </Stack>
-
             </form>
         );
     }
