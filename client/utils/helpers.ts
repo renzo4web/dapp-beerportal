@@ -1,8 +1,6 @@
-import { timeStamp } from 'console';
 import { ethers } from 'ethers';
 import abi from '../../artifacts/contracts/BeerPortal.sol/BeerPortal.json';
 import { BeerPortal } from '../../typechain/BeerPortal';
-import { useAppState } from '../context/AppState';
 import { Beer } from '../types/Beer.interface';
 
 const CONTRACT_ADDRESS = '0xC113dC65227073627f4eDbE65C5311d17Ee968Cd';
@@ -61,7 +59,7 @@ export const connectWallet = async (setWallet: (account: any) => void) => {
 export const beer = async (
     message: string,
     favBeer: string
-): Promise<Beer[] | undefined> => {
+): Promise<Beer[]> => {
     try {
         const { ethereum } = window;
 
@@ -91,13 +89,15 @@ export const beer = async (
 
             await beerTxn.wait();
             console.log('Mined -- ', beerTxn.hash);
-            const beers = (await getAllBeers()) || [];
-            return beers;
+            const beers = await getAllBeers();
+            return beers ? beers : [];
         } else {
             console.log("Ethereum object doesn't exist!");
+            return [];
         }
     } catch (error) {
         console.log(error);
+        return [];
     }
 };
 
@@ -135,22 +135,6 @@ export const getAllBeers = async () => {
                 message: beer.message,
                 favBeer: beer.favBeer,
             }));
-
-            beerPortalContract.on(
-                'NewBeer',
-                (from, timestamp, message, favBeer) => {
-                    console.log('NewBeer', from, timestamp, message, favBeer);
-
-                    return {
-                        address: from,
-                        timestamp: new Date(
-                            Number(timestamp) * 1000
-                        ).toString(),
-                        message,
-                        favBeer,
-                    };
-                }
-            );
         }
     } catch (error) {}
 };
